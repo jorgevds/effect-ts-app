@@ -1,0 +1,26 @@
+name: effect-ts-app
+
+version: '2.2'
+services:
+  database:
+    image: postgres:16.2-alpine
+    ports:
+      - "1234:5432"
+    volumes:
+      - ./db-init/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    environment:
+      - POSTGRES_DB=effect
+      - POSTGRES_TEST_DB=effect_test
+      - POSTGRES_USER=effect
+      - POSTGRES_PASSWORD=effect
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "effect" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - stack
+
+networks:
+  stack:
+    driver: bridge

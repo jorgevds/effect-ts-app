@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Chore {
+  id                String        @id @default(uuid())
+  name              String
+  locationId        String
+  performanceId     String?
+  instructionId     String?       @unique
+  choreListId       String?       @unique
+  timeInvalid       DateTime
+  estimationMinutes Int
+  instruction       Instruction?  @relation(fields: [instructionId], references: [id])
+  location          Location      @relation(fields: [locationId], references: [id])
+  performances      Performance[]
+  choreList         ChoreList?    @relation(fields: [choreListId], references: [id])  
+
+  @@unique([name, locationId])
+  @@unique([name, performanceId])
+}
+
+model Location {
+  id    String  @id @default(uuid())
+  name  String  @unique
+  chore Chore[]
+}
+
+model Instruction {
+  id    String @id @default(uuid())
+  name  String @unique
+  chore Chore?
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  name         String?
+  password     String?
+  performances Performance[]
+}
+
+model Performance {
+  id               String   @id @default(uuid())
+  performerId      String?
+  timePerformed    DateTime
+  minutesPerformed Int
+  choreId          String
+  chore            Chore    @relation(fields: [choreId], references: [id], onDelete: Cascade)
+  performer        User?    @relation(fields: [performerId], references: [id])
+
+  @@unique([performerId, timePerformed, choreId])
+}
+
+model ChoreList {
+  id           String        @id @default(uuid())
+  name         String
+  chores       Chore[]
+  complete     Boolean       @default(false)
+}
