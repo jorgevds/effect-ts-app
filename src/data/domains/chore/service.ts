@@ -1,8 +1,9 @@
-import { Chore as ORMChore, Location as ORMLocation, Performance as ORMPerformance, User as ORMPerformer } from "@prisma/client";
-import { Context, Effect, Layer, pipe, Either } from "effect";
+import { Chore as ORMChore, Location as ORMLocation } from "@prisma/client";
+import { Context, Effect, Layer, pipe, Either, flow } from "effect";
 import * as S from "@effect/schema/Schema";
 import * as O from "effect/Option";
 import * as A from "effect/Array";
+import * as E from "effect/Either";
 import { Chore, ChoreFull, _chore, _choreFull } from "./types";
 import { MalformedRequestError, ORM } from "../../orm";
 import { ParseError } from "@effect/schema/ParseResult";
@@ -11,9 +12,9 @@ import { addDays } from "date-fns";
 import { ORMError } from "../../ormError";
 import { authenticationServiceLive } from "../authentication/service";
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
-import { AuthenticationError } from "../authentication/authenticationError";
-import { PerformerFlat } from "../performer/types";
 import { PerformancePerformerLess } from "../performance/types";
+
+export const stringIsUuid = flow(S.encode(S.UUID));
 
 // model
 export interface ChoreService {
@@ -28,7 +29,7 @@ export interface ChoreService {
         estimationMinutes: number;
         location: string;
         timeInvalid: string;
-    }) => Effect.Effect<O.Option<Chore>, ORMError | MalformedRequestError>;
+    }) => Effect.Effect<E.Either<Chore, ParseError | ORMError | MalformedRequestError>, ORMError | MalformedRequestError>;
     readonly complete: (choreSubmit: {
         choreId: string;
         performerId: string;
@@ -41,6 +42,7 @@ const mapper = (input: ORMChore & { location: ORMLocation } & { performances: Pe
     pipe(O.fromNullable(input), O.flatMap(S.decodeOption(_chore, { errors: "all" })));
 const fullMapper = (input: any): O.Option<ChoreFull> =>
     pipe(O.fromNullable(input), O.flatMap(S.decodeOption(_choreFull, { errors: "all" })));
+const mapCreate = (input: any) => pipe(input, S.decodeEither(_chore, { errors: "all" }));
 // Impl
 const getById = (orm: ORM["Type"], id: string) =>
     Effect.tryPromise({
@@ -52,6 +54,7 @@ const getAll = (orm: ORM["Type"]) =>
     Effect.tryPromise({
         try: () =>
             orm.chore.findMany({
+                where: { choreListId: null },
                 include: { location: true, performances: true },
                 orderBy: [{ location: { name: "asc" } }],
             }),
@@ -75,7 +78,7 @@ const create = (orm: ORM["Type"], choreSubmit: { name: string; estimationMinutes
 
 const deleteChore = (orm: ORM["Type"], id: string) =>
     Effect.tryPromise({
-        try: () => orm.chore.delete({ where: { id } }),
+        try: () => orm.chore.delete({ where: { id }, include: { location: true, performances: true } }),
         catch: e => ORM.ormError(e).pipe(O.getOrElse(() => new MalformedRequestError({ error: e }))),
     });
 const complete = (orm: ORM["Type"], choreSubmit: { choreId: string; performerId: string }) =>
@@ -152,7 +155,7 @@ const make = (orm: ORM["Type"]): ChoreService => ({
             Effect.tap(() => Effect.logInfo(`Creating new chore with values: ${JSON.stringify(choreSubmit)}`)),
             Effect.bind("nullableNewChore", () => create(orm, choreSubmit)),
             Effect.mapBoth({
-                onSuccess: ({ nullableNewChore }) => mapper(nullableNewChore),
+                onSuccess: ({ nullableNewChore }) => mapCreate(nullableNewChore),
                 onFailure: e =>
                     Effect.runSync(
                         Effect.Do.pipe(

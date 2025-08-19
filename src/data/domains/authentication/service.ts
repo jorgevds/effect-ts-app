@@ -46,15 +46,18 @@ export interface AuthenticationService {
         password: Password;
     }) => Effect.Effect<O.Option<string>, PasswordParseError | MalformedRequestError>;
     // readonly forgetPassword: (id: Effect.Effect<string, ParseError, never>) => Effect.Effect<O.Option<Performer>, MalformedRequestError>;
-    readonly validateAccess: (token: RequestCookie | undefined) => Effect.Effect<Either.Either<JWTPayload, AuthenticationError>>;
+    readonly validateAccess: (
+        token: RequestCookie | undefined
+    ) => Effect.Effect<Either.Either<CustomJwt & JWTPayload, AuthenticationError>>;
 }
 /** DO NOT CONSUME IN FEATURE CODE OR YOU WILL BE FIRED */
 export const _AuthenticationService = Context.GenericTag<AuthenticationService>("@app/PerformerService");
+
 // impl
 const secretKey = () => createSecretKey(process.env.AUTH_SECRET ?? "", "utf-8");
 
 const createAccessToken = (secret: KeyObject) => async (user: PerformerFlat) =>
-    new SignJWT({ id: user.id, email: user.email })
+    new SignJWT({ id: user.id, name: user.name, email: user.email })
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .setIssuer("http://localhost")
@@ -62,8 +65,14 @@ const createAccessToken = (secret: KeyObject) => async (user: PerformerFlat) =>
         .setExpirationTime("1 day")
         .sign(secret);
 
+export interface CustomJwt {
+    id: string;
+    name: string;
+    email: string;
+}
+
 const verifyAccessToken = (secret: KeyObject) => async (token: string) => {
-    const { payload } = await jwtVerify(token, secret, {
+    const { payload } = await jwtVerify<CustomJwt>(token, secret, {
         issuer: "http://localhost",
         audience: "http://localhost",
     });

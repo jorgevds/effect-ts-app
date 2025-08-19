@@ -1,7 +1,7 @@
 import "../styles/global.css";
 
 import PrelineScript from "../components/prelineLoader";
-import { Header } from "../components/header";
+import { Header } from "../components/header/header";
 
 export const metadata = {
     title: "Chore world",

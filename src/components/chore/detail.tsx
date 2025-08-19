@@ -18,7 +18,7 @@ export const ChoreDetail = ({ chore }: ChoreDetailProps) => {
     }));
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col pt-4">
             <div className="flex justify-between pb-8">
                 <h2 className="text-3xl">{chore.name}</h2>
                 <ChoreCompleteButton id={chore.id} />
@@ -35,7 +35,7 @@ export const ChoreDetail = ({ chore }: ChoreDetailProps) => {
             </div>
 
             {chore.performances.length > 0 ? (
-                <div className="pt-28 w-1/2">
+                <div className="pt-28 sm:w-1/2">
                     <h3 className="text-xl pb-4">Performances</h3>
                     <PerformancesTable data={{ content: tableData, choreId: chore.id }} />
                 </div>

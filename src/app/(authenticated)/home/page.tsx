@@ -4,8 +4,9 @@ import { Effect, pipe } from "effect";
 
 import { choreServiceLive } from "../../../data/domains/chore/service";
 
-import { AppLink } from "../../../components/link";
+import { AppLink } from "../../../components/app-link";
 import { ChoresOverview } from "../../../components/chore/overview";
+import { NAV_CORE } from "../../nav-core";
 
 export default async function Home() {
     const allChores = await Effect.runPromise(choreServiceLive.pipe(Effect.flatMap(s => s.getAll())));
@@ -19,7 +20,7 @@ export default async function Home() {
                     <div className="pt-32 m-auto">
                         <h2 className="text-xl italic">Looks like you don't have any chores yet (lucky)</h2>
                         <div className="pt-3">
-                            Click <AppLink href="/add">here</AppLink> to add chores
+                            Click <AppLink href={NAV_CORE.add}>here</AppLink> to add chores
                         </div>
                     </div>
                 </div>

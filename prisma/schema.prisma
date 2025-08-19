@@ -11,9 +11,8 @@ model Chore {
   id                String        @id @default(uuid())
   name              String
   locationId        String
-  performanceId     String?
   instructionId     String?       @unique
-  choreListId       String?       @unique
+  choreListId       String?       
   timeInvalid       DateTime
   estimationMinutes Int
   instruction       Instruction?  @relation(fields: [instructionId], references: [id])
@@ -22,7 +21,6 @@ model Chore {
   choreList         ChoreList?    @relation(fields: [choreListId], references: [id])  
 
   @@unique([name, locationId])
-  @@unique([name, performanceId])
 }
 
 model Location {

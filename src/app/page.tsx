@@ -4,6 +4,7 @@ import { authenticationServiceLive } from "../data/domains/authentication/servic
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { NAV_CORE } from "./nav-core";
 
 export default async function Inauthenticated() {
     const cookieStorage = cookies();
@@ -14,11 +15,10 @@ export default async function Inauthenticated() {
         isValidated,
         Either.match({
             onLeft: () => {
-                redirect("/landing");
+                redirect(NAV_CORE.landing);
             },
             onRight: _ => {
-                console.log("home redirect", _);
-                redirect("/home");
+                redirect(NAV_CORE.home.base);
             },
         })
     );

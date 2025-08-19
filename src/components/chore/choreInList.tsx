@@ -6,7 +6,7 @@ export const ChoreInList = ({ name, timeInvalid, id }: { name: string; timeInval
         <div className="flex items-center justify-between my-4">
             <div>
                 <div>{name}</div>
-                <div>Perform again after {format(timeInvalid, "do MMMM yyyy")}</div>
+                <div className="text-xs">Do after {format(timeInvalid, "do MMMM")}</div>
             </div>
 
             <div className="flex items-center">

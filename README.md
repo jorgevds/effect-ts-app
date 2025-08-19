@@ -1,13 +1,21 @@
 # Full stack example with Next.js, RSC, Prisma, & Effect-ts
 
+## Making backups
+
+With the docker container running, you can run the following command to create a backup locally.
+
+```bash
+cat ./data.sql | docker compose -f docker-compose.yml exec -T database psql -U effect -d effect
+```
+
 ## Plan
 
 -   [x] Dependency injection
--   [ ] Git
--   [ ] Use plain Tailwind to make little app
--   [ ] Make more complex components to show off pipeline capabilities
--   [ ] Model typical domain issues on useful design patterns, such as Option
--   [ ] Custom errors
+-   [x] Git
+-   [x] Use plain Tailwind to make little app
+-   [x] Make more complex components to show off pipeline capabilities
+-   [x] Model typical domain issues on useful design patterns, such as Option
+-   [x] Custom errors
 -   [ ] Schema validation with own error
 -   [x] Retry policy
 -   [x] Env variables: retry policy in variables, feature flags

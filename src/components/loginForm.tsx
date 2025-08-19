@@ -2,10 +2,11 @@
 
 import { useFormState } from "react-dom";
 import { login } from "../server-actions/login";
-import { FormStateStatus } from "../server-actions/createChore";
-import { FormToast } from "./formToast";
+import { FormToast } from "./toast/formToast";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { FormStateStatus } from "../server-actions/types";
+import { NAV_CORE } from "../app/nav-core";
 
 export const LoginForm = () => {
     const router = useRouter();
@@ -14,7 +15,7 @@ export const LoginForm = () => {
 
     useEffect(() => {
         if (formState.status === "success") {
-            router.push("/home");
+            router.push(NAV_CORE.home.base);
         }
     }, [formState.status]);
 

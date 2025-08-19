@@ -1,4 +1,5 @@
-import { AppLink } from "../components/link";
+import { AppLink } from "../components/app-link";
+import { NAV_CORE } from "./nav-core";
 
 export default function NotFoundPage() {
     return (
@@ -6,7 +7,7 @@ export default function NotFoundPage() {
             <div className="m-auto">
                 Looks like you got lost, bub
                 <div>
-                    Click this <AppLink href="/">link</AppLink> to go back to the home page
+                    Click this <AppLink href={NAV_CORE.base}>link</AppLink> to go back to the home page
                 </div>
             </div>
         </div>

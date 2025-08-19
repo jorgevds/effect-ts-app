@@ -5,8 +5,8 @@ import { DataTable } from "./table";
 import { PerformerTableActions } from "./performerTableActions";
 import { useFormState } from "react-dom";
 import { performancesTableServerAction } from "../../server-actions/performanceTable";
-import { FormStateStatus } from "../../server-actions/createChore";
-import { FormToast } from "../formToast";
+import { FormToast } from "../toast/formToast";
+import { FormStateStatus } from "../../server-actions/types";
 
 export interface PerformanceRow {
     id: string;

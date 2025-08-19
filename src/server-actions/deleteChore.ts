@@ -6,7 +6,7 @@ import { Effect, Either, pipe } from "effect";
 import { choreServiceLive } from "../data/domains/chore/service";
 import { revalidatePath } from "next/cache";
 import { ErrorCode, ORMError } from "../data/ormError";
-import { FormStateStatus } from "./createChore";
+import { FormStateStatus } from "./types";
 
 export const deleteChoreServerAction = async (initialState: { id: string; status: FormStateStatus; error?: string }, data: FormData) => {
     const result = await Effect.runPromise(Effect.either(choreServiceLive.pipe(Effect.flatMap(s => s.deleteChore(initialState.id)))));

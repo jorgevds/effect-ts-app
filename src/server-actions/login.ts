@@ -3,9 +3,9 @@
 import { Effect, Either, pipe } from "effect";
 import { ErrorCode } from "../data/ormError";
 import { cookies } from "next/headers";
-import { FormStateStatus } from "./createChore";
 import { authenticationServiceLive } from "../data/domains/authentication/service";
 import { Password } from "../data/domains/authentication/types";
+import { FormStateStatus } from "./types";
 
 export const login = async (initialState: { status: FormStateStatus; error?: string }, values: FormData) => {
     const email = values.get("email")?.toString() ?? "";

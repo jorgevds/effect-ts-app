@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Toast } from "../components/toast";
-import { FormStateStatus } from "../server-actions/createChore";
+import { FormStateStatus } from "../server-actions/types";
 
 export const useToast = <T extends { status: FormStateStatus; error?: string }>(
     formState: T,

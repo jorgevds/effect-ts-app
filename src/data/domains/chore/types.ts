@@ -10,7 +10,6 @@ export const _chore = S.Struct({
     location: S.suspend(() => _location),
     locationId: S.NullOr(S.UUID),
     performances: S.suspend(() => S.Array(_performanceUserLess)),
-    performanceId: S.NullOr(S.UUID),
     instructionId: S.NullOr(S.UUID),
     timeInvalid: S.DateFromSelf.pipe(S.validDate()),
     estimationMinutes: S.Number.pipe(S.int(), S.positive()),
